@@ -65,7 +65,7 @@
 
     private static async Task Main(string[] args) {
         ekClient lietotajs = await pierakstisanas();
-        string header = $"{lietotajs.name}\n{lietotajs.school}\n";
+        string header = $"{lietotajs.name}\n{lietotajs.school}";
 
         /*
         -2 – beigt programmu
