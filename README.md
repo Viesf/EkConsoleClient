@@ -19,3 +19,6 @@ Uzrakstīt konsoles klientu e-klasei, kas var aizstāt vajadzību lietot e-klase
     - [ ] Vēstuļu lasīšana
     - [ ] Vēstuļu rakstīšana
 - [ ] Skolas saites
+
+<br>
+Viena, no pirmajām reizēm, kad stradāju ar github. Ja jums ir kādi ieteikumi, droši rakstat! :)
