@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "dgSpecHash": "0HYS3ydNtIcsIpSwpez3cuVsRcW5l8YE7m8NaD42ijAZSAYvLdmibDgUQ7dfbIAGf1GdXSY6peQQJnCrcMRJuA==",
+  "success": true,
+  "projectFilePath": "/home/viesf/Dev/CSharp_Projects/BetterEK/BetterEK.csproj",
+  "expectedPackageFiles": [
+    "/home/viesf/.nuget/packages/anglesharp/1.0.5/anglesharp.1.0.5.nupkg.sha512",
+    "/home/viesf/.nuget/packages/nstack.core/1.0.7/nstack.core.1.0.7.nupkg.sha512",
+    "/home/viesf/.nuget/packages/system.codedom/7.0.0/system.codedom.7.0.0.nupkg.sha512",
+    "/home/viesf/.nuget/packages/system.management/7.0.2/system.management.7.0.2.nupkg.sha512",
+    "/home/viesf/.nuget/packages/system.text.encoding.codepages/7.0.0/system.text.encoding.codepages.7.0.0.nupkg.sha512",
+    "/home/viesf/.nuget/packages/system.valuetuple/4.5.0/system.valuetuple.4.5.0.nupkg.sha512",
+    "/home/viesf/.nuget/packages/terminal.gui/1.14.0/terminal.gui.1.14.0.nupkg.sha512"
+  ],
+  "logs": []
+}
