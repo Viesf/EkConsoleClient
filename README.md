@@ -1,5 +1,4 @@
 # E-Klase Console Client
-Šo var iztestēt <a target="_blank" href="https://replit.com/@Viesf/EkConsoleClient">replitā</a>
 ## Kas ir šis?
 Šis, kā pēc nosaukuma, cerams, var nojaust ir konsoles klients e-klasei.
 Kas ir sarakstīts C# programmēšanas valodā.
