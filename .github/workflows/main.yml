@@ -1,0 +1,46 @@
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches: 
+    - main
+jobs:
+  publish:
+    name: Publish
+    runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    
+    steps:
+      - name: Setup latest .NET SDKs
+        # You may pin to the exact commit or the version.
+        # uses: Elskom/setup-latest-dotnet@908aae4113c27b157acc40625a3495c80b29f407
+        uses: Elskom/setup-latest-dotnet@v1.1.2
+        with:
+          # Major version of the .NET SDK to install.
+          VERSION_MAJOR: 7
+          # Minor version of the .NET SDK to install.
+          VERSION_MINOR: 0
+
+      - name: Publish
+        uses: EasyDesk/action-dotnet-publish@v1
+        with:
+          # (Optional) The path to the project that should be published.
+          # If not specified, defaults to '.'.
+          path: '/published/'
+
+          # (Optional) The build configuration.
+          # If not specified, defaults to 'Release'.
+          build-configuration: Release
+
+          # (Optional) Whether to skip the build using the '--no-build' flag.
+          # If not specified, defaults to true.
+          skip-build: false
+          
+      - name: upload
+        uses: actions/upload-artifact@v3
+        with:
+           name: my-artifact
+           path: path/to/artifact/ # or path/to/artifact
