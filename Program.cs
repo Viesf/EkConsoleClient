@@ -6,7 +6,7 @@
     private static string splitIntoLines(string toSplit, string indentor) {
         string result = indentor;
         string[] words = toSplit.Split(' ');
-        int remainingChars = Console.WindowWidth - indentor.Length;
+        int remainingChars = Console.WindowWidth - indentor.Length - 1; // Nestrāda līdz galam pareizi, slinkums labot, tāpēc vienkārši -1
 
         foreach(string word in words) {
             if(remainingChars - word.Length - 1 >= 0) {
@@ -16,7 +16,7 @@
 
             else if(remainingChars - word.Length - 1 < 0) {
                 result += $"\n{indentor}{word} ";
-                remainingChars = Console.WindowWidth - indentor.Length - word.Length;
+                remainingChars = Console.WindowWidth - indentor.Length - word.Length - 1;
             }
         }
         return result;
@@ -129,8 +129,37 @@
                             string prieksmets = $"{(stunda.Key[0] == '○' ? "○ " : stunda.Key)} {stundaV["prieksmets"]}";
                             string atzimes = string.Join(" | ", stundaV["atzimes"]);
 
-                            between = Console.WindowWidth - prieksmets.Length - atzimes.Length;
-                            Console.WriteLine($"{prieksmets}{new string(' ', between)}{atzimes}");
+                            between = Console.WindowWidth - prieksmets.Length - atzimes.Length - 2;
+                            Console.WriteLine($"{prieksmets} {new string('─', between)} {atzimes}");
+
+                            // Tēma
+                            if(stundaV["tema"].Length > 0) {
+                                Console.WriteLine($"    Tēma:\n{splitIntoLines(stundaV["tema"], "      ")}");
+                                Console.WriteLine();
+
+                                // Uzraksta visas saites
+                                // Saite 1 – example.com
+                                foreach(KeyValuePair<string, string> saite in stundaV["tema_saites"]) {
+                                    Console.WriteLine($"      {saite.Key} – {saite.Value}");
+                                }
+
+                                Console.WriteLine();
+                            }
+
+                            // Uzdots
+                            if(stundaV["uzdots"].Length > 0) {
+                                Console.WriteLine($"    Uzdots:\n{splitIntoLines(stundaV["uzdots"], "      ")}");
+                                Console.WriteLine();
+
+                                // Uzraksta visas saites
+                                // Saite 1 – example.com
+                                foreach(KeyValuePair<string, string> saite in stundaV["uzdots_saites"]) {
+                                    Console.WriteLine($"      {saite.Key} – {saite.Value}");
+                                }
+
+                                Console.WriteLine();
+                            }
+
                         }
                     }
 
