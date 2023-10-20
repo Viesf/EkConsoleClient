@@ -8,7 +8,7 @@ on:
 jobs:
   publish:
     name: Publish
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
@@ -39,8 +39,8 @@ jobs:
           # If not specified, defaults to true.
           skip-build: false
           
-      - name: upload
+      - name: Upload
         uses: actions/upload-artifact@v3
         with:
            name: my-artifact
-           path: path/to/artifact/ # or path/to/artifact
+           path: /published/ # or path/to/artifact
