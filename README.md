@@ -4,6 +4,8 @@
 Kas ir sarakstīts C# programmēšanas valodā.
 ## Mērķis
 Uzrakstīt konsoles klientu e-klasei, kas var aizstāt vajadzību lietot e-klases mājaslapu.
+## Zināmās problēmas
+- Dažiem lietotājiem, mēdz ielogoties nepareizajā skolas kontā
 ## Progress
 - [x] Dienasgrāmata
     - [x] Stundu saraksts
