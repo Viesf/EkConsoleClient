@@ -1,4 +1,6 @@
 ﻿internal class Program {
+
+    
     private static void horizontalLine(char c) {
         for(int i = 0; i < Console.WindowWidth; i++) Console.Write(c); Console.WriteLine();
     }
@@ -64,6 +66,7 @@
     }
 
     private static async Task Main(string[] args) {
+        Console.OutputEncoding = System.Text.Encoding.UTF8;
         ekClient lietotajs = await pierakstisanas();
         string header = $"{lietotajs.name}\n{lietotajs.school}";
 
