@@ -34,4 +34,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: EkCC-${{ matrix.os }}
-        path: /home/runner/work/EkConsoleClient/EkConsoleClient/bin/Release/net7.0/*/publish/*
+        path: /home/runner/work/EkConsoleClient/EkConsoleClient/bin/Release/net7.0/${{ matrix.os }}/publish/${{ matrix.os == 'linux-x64' && 'BetterEK' || 'BetterEK.exe' }}
