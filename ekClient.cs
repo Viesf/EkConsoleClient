@@ -65,7 +65,8 @@ class ekClient {
 
         for(int i = 0; i < linkElements.Length; i++) {
             string saite = linkElements[i].GetAttribute("href"); 
-            if(saite.StartsWith("/Attachment/Get/") || saite.StartsWith("/Auth/OAuth/")) saite = "https://my.e-klase.lv" + saite; // Pabeidz e-klases pielikumu saites, jo tās eklasē parādas bez sākuma
+            if(saite.StartsWith("/Attachment/Get/") || saite.StartsWith("/Auth/OAuth/"))
+                saite = "https://my.e-klase.lv" + saite; // Pabeidz e-klases pielikumu saites, jo tās eklasē parādas bez sākuma
 
             saites[i, 0] = removeHtmlTags(linkElements[i].InnerHtml); // Linka teksts
 
@@ -191,7 +192,7 @@ class ekClient {
                                             tema = tema.Replace(saites[v, 0], $"{saites[v, 0]}(Saite {v + 1})");
                                 
                                         schedule[diena]["stundas"][stundasNr]["tema_saites"]
-                                            .Add($"Saite {v + 1}", saites[v, 0]);
+                                            .Add($"Saite {v + 1}", saites[v, 1]);
                                     }
                                     
                                     // Aizvieto " ", kas atkārtojas ar vienu " "
@@ -206,7 +207,7 @@ class ekClient {
                                     saites = getLinks(currentElement);
 
                                     string uzdots = removeHtmlTags(currentElement.InnerHtml);
-                                    uzdots = uzdots.Replace("\n", "");
+                                    uzdots = uzdots.Replace("\n", "").Trim();
 
                                     schedule[diena]["stundas"][stundasNr].Add("uzdots_saites", new Dictionary<string, string>());
                                     // Aizvieto linkus ar Saite1, Saite2...
@@ -219,7 +220,7 @@ class ekClient {
                                             uzdots = uzdots.Replace(saites[v, 0], $"{saites[v, 0]}(Saite {v + 1})");
                                 
                                         schedule[diena]["stundas"][stundasNr]["uzdots_saites"]
-                                            .Add($"Saite {v + 1}", saites[v, 0]);
+                                            .Add($"Saite {v + 1}", saites[v, 1]);
                                     }
 
                                     uzdots = repeatingWhiteSpaces.Replace(uzdots, " ");
