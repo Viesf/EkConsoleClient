@@ -39,7 +39,7 @@
             if(password == null) password = "";
 
             // Mēģina pierakstīties
-            bool izdevasPierakstities = await lietotajs.initialize(userName: userName, password: password);
+            bool izdevasPierakstities = await lietotajs.initialize(UserName: userName, Password: password);
 
             if(!izdevasPierakstities) {
                 Console.Clear();
