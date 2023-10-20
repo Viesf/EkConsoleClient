@@ -5,7 +5,7 @@ Kas ir sarakstīts C# programmēšanas valodā.
 ## Mērķis
 Uzrakstīt konsoles klientu e-klasei, kas var aizstāt vajadzību lietot e-klases mājaslapu.
 ## Progress
-- [ ] Dienasgrāmata
+- [x] Dienasgrāmata
     - [x] Stundu saraksts
         - [x] Priekšmets
         - [x] Kura stunda pēc kārtas
