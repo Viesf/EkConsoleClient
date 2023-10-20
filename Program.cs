@@ -125,12 +125,16 @@
                         foreach(KeyValuePair<string, dynamic> stunda in dienaV["stundas"]) {
                             Dictionary<string, dynamic> stundaV = stunda.Value;
 
-                            // stunda p.k., priekšmeta nosaukums, atzīmes
+                            // stunda p.k., priekšmeta nosaukums, atzīmes, klase/kabinets
                             string prieksmets = $"{(stunda.Key[0] == '○' ? "○ " : stunda.Key)} {stundaV["prieksmets"]}";
                             string atzimes = string.Join(" | ", stundaV["atzimes"]);
+                            string klase = stundaV["klase"];
 
-                            between = Console.WindowWidth - prieksmets.Length - atzimes.Length - 2;
-                            Console.WriteLine($"{prieksmets} {new string('─', between)} {atzimes}");
+                            
+                            int totalBetween = Console.WindowWidth - prieksmets.Length - atzimes.Length - klase.Length - 4;
+                            int before = Console.WindowWidth / 2 - prieksmets.Length - Convert.ToInt32(klase.Length / 2);
+                            if(before < 0) before = 0;
+                            Console.WriteLine($"{prieksmets} {new string('─', before)} {klase} {new string('─', totalBetween - before)} {atzimes}");
 
                             // Tēma
                             if(stundaV["tema"].Length > 0) {
