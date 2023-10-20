@@ -27,9 +27,6 @@ jobs:
       - name: Publish
         uses: EasyDesk/action-dotnet-publish@v1
         with:
-          # (Optional) The path to the project that should be published.
-          # If not specified, defaults to '.'.
-          path: /published
 
           # (Optional) The build configuration.
           # If not specified, defaults to 'Release'.
@@ -43,4 +40,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
            name: my-artifact
-           path: /published/ # or path/to/artifact
+           path: /home/runner/work/EkConsoleClient/EkConsoleClient/packages/ # or path/to/artifact
