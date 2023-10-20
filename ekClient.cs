@@ -2,11 +2,15 @@ using System.Text.RegularExpressions;
 using System.Web;
 using AngleSharp;
 using AngleSharp.Dom;
+using AngleSharp.Io;
 
 class ekClient {
     private HttpClient webClient = new HttpClient();
     public string name = "";
     public string school = "";
+
+    private protected string userName = "";
+    private protected string password = "";
     
     private async Task<IDocument> angleHtml(string source) {
         IConfiguration config = Configuration.Default;
@@ -29,7 +33,7 @@ class ekClient {
         school = doc.GetElementsByClassName("school")[0].InnerHtml;
     }
 
-    private async Task<bool> logIn(string userName, string password) {
+    private async Task<bool> logIn() {
         // Pievieno lietotāja ievadīto lietotājvārdu un paroli payload
         var payload = new FormUrlEncodedContent(new[] {
             new KeyValuePair<string, string>("UserName", userName),
@@ -60,7 +64,7 @@ class ekClient {
 
     // Atrod linkus dotajā elementā(div span utt.)
     private string[,] getLinks(IElement element) {
-        var linkElements = element.GetElementsByTagName("a"); // Visi link(a) elementi
+        var linkElements = element.GetElementsByTagName("a"); // Visi link(<a>) elementi
         string[,] saites = new string[linkElements.Length, 2]; // Gala array piemērs: {{"Mājasdarbs", "https://cornhub.com"}, {"https://app.soma.lv/viedtema/geografija/astota-klase/kas-ir-dabas-resu...", "https://app.soma.lv/viedtema/geografija/astota-klase/kas-ir-dabas-resursi/turisma-resursi"}}
 
         for(int i = 0; i < linkElements.Length; i++) {
@@ -79,6 +83,21 @@ class ekClient {
 
         return saites;
     }
+
+    // Pārliecinās, vai joprojām ir pierakstījies
+    private async Task<bool> ensureLogin(string response) {
+        if(response.Contains("class=\"login-form-header\"")) {
+            Console.WriteLine("Pierakstās vēlreiz");
+            if(await logIn() == false) {
+                Console.WriteLine("Neidzevās pierakstīties");
+                await Task.Delay(3000);
+                Environment.Exit(1);
+            }
+            else
+                return true;
+        } 
+        return false; // vajag rerequestot lapu
+    } 
 
     // Metode, kas atgriež visas nedēļas stundu sarakstu, kā nested dictionary
     public async Task<Dictionary<string, dynamic>> Schedule(DateTime week/*jebkuras nedēļas dienas datums*/) { // datuma formāts: diena.mēnesis.pilnsGads
@@ -111,11 +130,20 @@ class ekClient {
 
         // Dabū dienasgrāmatas lapu
         string link = "/Family/Diary?Date=" + string.Format("{0:dd.MM.yyyy}", week); // Pievieno datumu, tekošajai nedēļai datumu nevajag
+        
         var response = await webClient.GetAsync(link);
         response.EnsureSuccessStatusCode();
+        string responseS = await response.Content.ReadAsStringAsync();
+
+        if(await ensureLogin(responseS)) { // vajag re-requestot lapu
+            response = await webClient.GetAsync(link);
+            response.EnsureSuccessStatusCode();
+            responseS = await response.Content.ReadAsStringAsync();
+        }
+        
 
         // Izveido Angle# Dokumentu no diensgramatas html
-        var doc = await angleHtml(await response.Content.ReadAsStringAsync());
+        var doc = await angleHtml(responseS);
 
         // Dienasgrāmatas lapas elements, kurā ir dienas + tabulas
         var scheduleR = doc.GetElementsByClassName("student-journal-lessons-table-holder hidden-xs")[0];
@@ -275,8 +303,10 @@ class ekClient {
     }
 
     // Konstruktora async papildinājums
-    public async Task<bool> initialize(string userName, string password) {
-        if(await logIn(userName, password) == false)
+    public async Task<bool> initialize(string UserName, string Password) {
+        userName = UserName;
+        password = Password;
+        if(await logIn() == false)
             return false;
         await getDetails(); 
 
