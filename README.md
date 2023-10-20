@@ -6,7 +6,7 @@ Kas ir sarakstīts C# programmēšanas valodā.
 Uzrakstīt konsoles klientu e-klasei, kas var aizstāt vajadzību lietot e-klases mājaslapu.
 ## Progress
 - [ ] Dienasgrāmata
-    - [ ] Stundu saraksts
+    - [x] Stundu saraksts
         - [x] Priekšmets
         - [x] Kura stunda pēc kārtas
         - [x] Klase, kurā notiek šī stunda
