@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: ["ubuntu-latest", "windows-latest"]
+        os: ["linux-x64", "win-x64"]
       
 
     steps:
