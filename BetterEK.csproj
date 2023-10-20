@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <PackageReference Include="AngleSharp" Version="1.0.5" />
-    <PackageReference Include="Terminal.Gui" Version="1.14.0" />
   </ItemGroup>
 
 </Project>
