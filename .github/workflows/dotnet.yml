@@ -30,8 +30,8 @@ jobs:
     #  run: dotnet restore
     - name: Publish
       run: dotnet publish -c Release -r ${{ matrix.os }}
-    - name: Upload dotnet test results
+    - name: Upload files
       uses: actions/upload-artifact@v3
       with:
         name: EkCC-${{ matrix.os }}
-        path: BetterEK/bin/Release/publish/*
+        path: /home/runner/work/EkConsoleClient/EkConsoleClient/bin/Release/net7.0/*/publish/*
