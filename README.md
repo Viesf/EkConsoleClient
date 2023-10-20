@@ -10,9 +10,9 @@ Uzrakstīt konsoles klientu e-klasei, kas var aizstāt vajadzību lietot e-klase
     - [ ] Stundu saraksts
         - [x] Priekšmets
         - [x] Kura stunda pēc kārtas
-        - [ ] Klase, kurā notiek šī stunda
-    - [ ] Stundu tēmas
-    - [ ] Uz stundu uzdotais
+        - [x] Klase, kurā notiek šī stunda
+    - [x] Stundu tēmas
+    - [x] Uz stundu uzdotais
     - [x] Atzīme
 
 - [ ] E-klases pasts
