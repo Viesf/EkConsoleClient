@@ -50,6 +50,36 @@
             else pierakstijas = true;
         } while (!pierakstijas);
 
+        // Iegūst profila izvēli no lietotāja
+        var profili = await lietotajs.getProfiles();
+        int profils = -69;
+        while(profils == -69){
+            Console.WriteLine("Kurš profils?");
+
+            for(int i = 0; i < profili.Length; i++) {
+                Console.WriteLine($"{i+1}. {profili[i]["vards"]} {profili[i]["skola"]}");
+            }
+
+            if(int.TryParse(Console.ReadLine(), out int temp)) {
+                if(temp > 0 && temp <= profili.Length) {
+                    profils = temp - 1;
+                }
+                else {
+                    Console.Clear();
+                    Console.WriteLine("Izvēlies kādu no piedāvātajiem profiliem!");
+                }
+            }
+            else {
+                Console.Clear();
+                Console.WriteLine("Ievadi skaitli!");
+            }
+        }
+
+        await lietotajs.selectProfile(
+            pfId: profili[profils]["pf_id"],
+            tenantId: profili[profils]["tenant_id"]
+        );
+
         return lietotajs;
     }
 

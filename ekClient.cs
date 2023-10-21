@@ -12,6 +12,8 @@ class ekClient {
     private protected string userName = "";
     private protected string password = "";
     
+    private Regex repeatingWhiteSpaces = new Regex(" +");
+
     private async Task<IDocument> angleHtml(string source) {
         IConfiguration config = Configuration.Default;
         IBrowsingContext context = BrowsingContext.New(config);
@@ -33,7 +35,54 @@ class ekClient {
         school = doc.GetElementsByClassName("school")[0].InnerHtml;
     }
 
+    public async Task selectProfile(string pfId, string tenantId) {
+        var payload = new FormUrlEncodedContent(new[] {
+            new KeyValuePair<string, string>("pf_id", pfId),
+            new KeyValuePair<string, string>("tenant_id", tenantId),
+            new KeyValuePair<string, string>("RedirectUrl", "%2FSystemTermsAndConditions")
+        });
+        var response = await webClient.PostAsync("/SystemTermsAndConditions", payload);
+        response.EnsureSuccessStatusCode();
+    }
+
+    public async Task<Dictionary<string, string>[]> getProfiles() {
+        var response = await webClient.GetAsync("/Family/UserLoginProfile");
+        response.EnsureSuccessStatusCode();
+        var responseS = await response.Content.ReadAsStringAsync();
+
+        IDocument doc = await angleHtml(responseS);
+
+        List<Dictionary<string, string>> profili = new List<Dictionary<string, string>>();
+        /*profili formāts: {
+            {   "vards" : "Janis Bērziņš" : 
+                "skola" : "Jūrmalas pamatskola",
+                "pf_id" : "216846",
+                "tenant_id" : "pretendthatthisistenantidcauseitslongaf"
+            }...
+        }*/
+        foreach(var profils in doc.GetElementsByClassName("modal-options")[0].GetElementsByClassName("student-item")){
+            string vards = removeHtmlTags(profils.GetElementsByClassName("modal-options-title")[0].InnerHtml).Trim();
+
+            string skola = removeHtmlTags(profils.GetElementsByClassName("modal-options-choice")[0].InnerHtml).Trim();
+            skola = skola.Substring(skola.IndexOf(' ') + 1);
+
+            var IDsElement = profils.GetElementsByClassName("modal-options-choice")[0].GetElementsByClassName("btn-switch-student")[0];
+            string pf_id = IDsElement.GetAttribute("data-pf_id");
+            string tenant_id = IDsElement.GetAttribute("data-tenantid");
+
+            profili.Add(new Dictionary<string, string>{
+                {"vards", vards},
+                {"skola", skola},
+                {"pf_id", pf_id},
+                {"tenant_id", tenant_id}
+            });
+        }
+        return profili.ToArray();
+    }
+
     private async Task<bool> logIn() {
+        // Formāta piemērs skolas izvēlei:
+        // /SystemTermsAndConditions?RedirectUrl=%2FSystemTermsAndConditions&pf_id=/pf_id/&TenantId=Tenant_id
         // Pievieno lietotāja ievadīto lietotājvārdu un paroli payload
         var payload = new FormUrlEncodedContent(new[] {
             new KeyValuePair<string, string>("UserName", userName),
@@ -103,7 +152,7 @@ class ekClient {
     public async Task<Dictionary<string, dynamic>> Schedule(DateTime week/*jebkuras nedēļas dienas datums*/) { // datuma formāts: diena.mēnesis.pilnsGads
         Dictionary<string, dynamic> schedule = new Dictionary<string,dynamic>();
         string diena = "";
-        Regex repeatingWhiteSpaces = new Regex(" +");
+        
 
         /* /schedule/ formāts { 
             "Pirmdiena": {
