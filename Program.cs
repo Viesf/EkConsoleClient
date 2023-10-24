@@ -24,32 +24,8 @@
         return result;
     }
 
-    private static async Task<ekClient> pierakstisanas() {
+    private static async Task<ekClient> changeUser(ekClient lietotajs) {
         Console.Clear();
-        ekClient lietotajs = new ekClient(host: "https://my.e-klase.lv");
-
-        // Pierakstīšanās 
-        bool pierakstijas = false;
-        do {
-            // Iegūst lietotājvārdu un paroli
-            Console.Write("Lietotājvārds: ");
-            string? userName = Console.ReadLine();
-            if(userName == null) userName = "";
-
-            Console.Write("Parole: ");
-            string? password = Console.ReadLine();
-            if(password == null) password = "";
-
-            // Mēģina pierakstīties
-            bool izdevasPierakstities = await lietotajs.initialize(UserName: userName, Password: password);
-
-            if(!izdevasPierakstities) {
-                Console.Clear();
-                Console.WriteLine("Nepareizs lietotājvārds un/vai parole!");
-            }
-            else pierakstijas = true;
-        } while (!pierakstijas);
-
         // Iegūst profila izvēli no lietotāja
         var profili = await lietotajs.getProfiles();
         int profils = -69;
@@ -82,6 +58,37 @@
 
         return lietotajs;
     }
+    
+    private static async Task<ekClient> pierakstisanas() {
+        Console.Clear();
+        ekClient lietotajs = new ekClient(host: "https://my.e-klase.lv");
+
+        // Pierakstīšanās 
+        bool pierakstijas = false;
+        do {
+            // Iegūst lietotājvārdu un paroli
+            Console.Write("Lietotājvārds: ");
+            string? userName = Console.ReadLine();
+            if(userName == null) userName = "";
+
+            Console.Write("Parole: ");
+            string? password = Console.ReadLine();
+            if(password == null) password = "";
+
+            // Mēģina pierakstīties
+            bool izdevasPierakstities = await lietotajs.initialize(UserName: userName, Password: password);
+
+            if(!izdevasPierakstities) {
+                Console.Clear();
+                Console.WriteLine("Nepareizs lietotājvārds un/vai parole!");
+            }
+            else pierakstijas = true;
+        } while (!pierakstijas);
+
+        lietotajs = await changeUser(lietotajs);
+
+        return lietotajs;
+    }
 
     private static int getChoice(int[] validChoices) {
         while(true) {
@@ -94,7 +101,7 @@
             Console.Write(new string(' ', Console.WindowWidth));
         }
     }
-    
+
     private static async Task Main(string[] args) {
         Console.OutputEncoding = System.Text.Encoding.UTF8;
         ekClient lietotajs = await pierakstisanas();
@@ -107,7 +114,7 @@
         1 – apskatīt dienasgrāmatu
         */
         int choice = 0;
-        while (choice != -2){
+        while (choice != -3){
             Console.Clear();
 
 
@@ -121,12 +128,16 @@
             switch (choice) {
                 case 0:
                     Console.WriteLine(
-                        "Ko tu vēlies darīt?\n-2 – Aizvērt šo programmu\n-1 – Izrakstīties\n1 – Apskatīt dienasgrāmatu"
+                        "Ko tu vēlies darīt?\n-3 – Aizvērt šo programmu\n-2 – Izrakstīties\n-1 – nomainīt skolu\n1 – Apskatīt dienasgrāmatu"
                     );
                     choice = getChoice(new int[]{-2, -1, 1});
                     break;
-                case -1:
+                case -2:
                     lietotajs = await pierakstisanas();
+                    choice = 0;
+                    break;
+                case -1:
+                    lietotajs = await changeUser(lietotajs);
                     choice = 0;
                     break;
                 case 1:
