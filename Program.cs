@@ -28,7 +28,7 @@
         Console.Clear();
         ekClient lietotajs = new ekClient(host: "https://my.e-klase.lv");
 
-        // Pierakstīšanās
+        // Pierakstīšanās 
         bool pierakstijas = false;
         do {
             // Iegūst lietotājvārdu un paroli
