@@ -2,7 +2,6 @@ using System.Text.RegularExpressions;
 using System.Web;
 using AngleSharp;
 using AngleSharp.Dom;
-using AngleSharp.Io;
 
 class ekClient {
     private HttpClient webClient = new HttpClient();
@@ -23,7 +22,7 @@ class ekClient {
     // Iegūst vārdu, uzvārdu un klasi, skolu
     private async Task getDetails() {
         // Iegūst mājaslapu
-        var response = await webClient.GetAsync("/Family/Home?login=1");
+        var response = await webClient.GetAsync("/Family/Home");
         response.EnsureSuccessStatusCode();
 
         // izveidot Angle# dokumentu no tās lapas
@@ -38,11 +37,14 @@ class ekClient {
     public async Task selectProfile(string pfId, string tenantId) {
         var payload = new FormUrlEncodedContent(new[] {
             new KeyValuePair<string, string>("pf_id", pfId),
-            new KeyValuePair<string, string>("tenant_id", tenantId),
-            new KeyValuePair<string, string>("RedirectUrl", "%2FSystemTermsAndConditions")
+            new KeyValuePair<string, string>("TenantId", tenantId),
+            new KeyValuePair<string, string>("RedirectUrl", "/SystemTermsAndConditions")
         });
-        var response = await webClient.PostAsync("/SystemTermsAndConditions", payload);
+
+        var response = await webClient.PostAsync("/SessionContext/SwitchStudentWithFamilyStudentAutoAdd", payload);
         response.EnsureSuccessStatusCode();
+
+        await getDetails();
     }
 
     public async Task<Dictionary<string, string>[]> getProfiles() {
@@ -55,7 +57,7 @@ class ekClient {
         List<Dictionary<string, string>> profili = new List<Dictionary<string, string>>();
         /*profili formāts: {
             {   "vards" : "Janis Bērziņš" : 
-                "skola" : "Jūrmalas pamatskola",
+                "skola" : "Berģu pamatskola",
                 "pf_id" : "216846",
                 "tenant_id" : "pretendthatthisistenantidcauseitslongaf"
             }...
@@ -357,8 +359,6 @@ class ekClient {
         password = Password;
         if(await logIn() == false)
             return false;
-        await getDetails(); 
-
         return true;
     }
 

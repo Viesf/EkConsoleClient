@@ -94,7 +94,7 @@
             Console.Write(new string(' ', Console.WindowWidth));
         }
     }
-
+    
     private static async Task Main(string[] args) {
         Console.OutputEncoding = System.Text.Encoding.UTF8;
         ekClient lietotajs = await pierakstisanas();
