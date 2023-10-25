@@ -97,8 +97,12 @@
                 if(validChoices.Contains(intInput)) {
                     return intInput;
                 }
+                else
+                    Console.WriteLine("Nelegāla izvēle");
             }
-            Console.Write(new string(' ', Console.WindowWidth));
+            else
+                Console.WriteLine("Ievadi skaitli!!");
+            // Console.Write(new string(' ', Console.WindowWidth));
         }
     }
 
@@ -108,11 +112,14 @@
         string header = $"{lietotajs.name}\n{lietotajs.school}";
 
         /*
-        -2 – beigt programmu
-        -1 – izrakstīties
+        -3 – beigt programmu
+        -2 – izrakstīties
+        -1 – mainīt skolu
         0 – nav izvēle, galvenā izvēle
         1 – apskatīt dienasgrāmatu
+        2 – apskatīt saņemtās vēstules
         */
+        
         int choice = 0;
         while (choice != -3){
             Console.Clear();
@@ -121,16 +128,12 @@
             Console.WriteLine($"{lietotajs.name}\n{lietotajs.school}");
             horizontalLine('═');
 
-            if(choice == 0) {
-                
-            }
-
             switch (choice) {
                 case 0:
                     Console.WriteLine(
-                        "Ko tu vēlies darīt?\n-3 – Aizvērt šo programmu\n-2 – Izrakstīties\n-1 – nomainīt skolu\n1 – Apskatīt dienasgrāmatu"
+                        "Ko tu vēlies darīt?\n-3 – Aizvērt šo programmu\n-2 – Izrakstīties\n-1 – nomainīt skolu\n1 – Apskatīt dienasgrāmatu\n2 – apskatīt vēstules"
                     );
-                    choice = getChoice(new int[]{-2, -1, 1});
+                    choice = getChoice(new int[]{-3, -2, -1, 1, 2});
                     break;
                 case -2:
                     lietotajs = await pierakstisanas();
@@ -211,6 +214,49 @@
                         Console.WriteLine("ENTER lai turpinātu"); Console.ReadLine();
                     }
 
+                    choice = 0;
+                    break;
+                case 2:
+                    int messageCount = 6942069;
+                    while(messageCount ==  6942069) {
+                        Console.WriteLine("Cik jaunākās vestules gribi redzēt?");
+                        if(int.TryParse(Console.ReadLine(), out int temp)) {
+                            if(temp > 0) messageCount = temp;
+                            else
+                                Console.WriteLine("Ievadi skaitli, kas lielāks par 0!");
+                        }
+                        else
+                            Console.WriteLine("Ievadi skaitli!");
+                    }
+
+                    Console.Clear();
+                    Console.WriteLine(header);
+                    horizontalLine('═');
+
+                    Console.WriteLine($"{new string(' ', Console.WindowWidth / 2 - 4)}Vēstules");
+
+                    horizontalLine('═');
+
+                    Dictionary<string, dynamic>[] vestules = await lietotajs.getMessages(messageCount);
+                    foreach(Dictionary<string, dynamic> vestule in vestules) {
+                        int totalBetween = Console.WindowWidth - vestule["autors"].Length - vestule["datums"].Length - vestule["tema"].Length - 4;
+                        int before = Console.WindowWidth / 2 - vestule["autors"].Length - Convert.ToInt32(vestule["tema"].Length / 2);
+                        if(before < 0) before = 0;
+                        Console.WriteLine($"{vestule["autors"]} {new string('─', before)} {vestule["tema"]} {new string('─', totalBetween - before)} {vestule["datums"]}");
+
+                        Console.WriteLine(vestule["teksts"]);
+
+                        if(vestule["saites"].Length > 0) {
+                            Console.WriteLine("\nSaites:");
+                            for(int i = 0; i < vestule["saites"].Length; i++) {
+                                Console.WriteLine($"Saite {i + 1} – {vestule["saites"][i]}");
+                            }
+                        }
+
+                        horizontalLine('─');
+                    }
+
+                    Console.WriteLine("ENTER lai turpinātu"); Console.ReadLine();
                     choice = 0;
                     break;
             }

@@ -2,6 +2,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using AngleSharp;
 using AngleSharp.Dom;
+using Newtonsoft.Json;
 
 class ekClient {
     private HttpClient webClient = new HttpClient();
@@ -116,6 +117,29 @@ class ekClient {
     // Atrod linkus dotajā elementā(div span utt.)
     private string[,] getLinks(IElement element) {
         var linkElements = element.GetElementsByTagName("a"); // Visi link(<a>) elementi
+        string[,] saites = new string[linkElements.Length, 2]; // Gala array piemērs: {{"Mājasdarbs", "https://cornhub.com"}, {"https://app.soma.lv/viedtema/geografija/astota-klase/kas-ir-dabas-resu...", "https://app.soma.lv/viedtema/geografija/astota-klase/kas-ir-dabas-resursi/turisma-resursi"}}
+
+        for(int i = 0; i < linkElements.Length; i++) {
+            string saite = linkElements[i].GetAttribute("href"); 
+            if(saite.StartsWith("/Attachment/Get/") || saite.StartsWith("/Auth/OAuth/"))
+                saite = "https://my.e-klase.lv" + saite; // Pabeidz e-klases pielikumu saites, jo tās eklasē parādas bez sākuma
+
+            saites[i, 0] = removeHtmlTags(linkElements[i].InnerHtml); // Linka teksts
+
+            if(saite.Contains("destination_uri=")) {
+                saite = saite.Substring(saite.IndexOf("destination_uri=") + 16); // 16 = "destination_uri=" garums
+                saite = HttpUtility.UrlDecode(saite);
+            }
+            saites[i, 1] = saite; // Links
+        };
+
+        return saites;
+    }
+
+    // String overload
+    private async Task<string[,]> getLinks(string htmlString) {
+        var doc = await angleHtml(htmlString);
+        var linkElements = doc.GetElementsByTagName("a"); // Visi link(<a>) elementi
         string[,] saites = new string[linkElements.Length, 2]; // Gala array piemērs: {{"Mājasdarbs", "https://cornhub.com"}, {"https://app.soma.lv/viedtema/geografija/astota-klase/kas-ir-dabas-resu...", "https://app.soma.lv/viedtema/geografija/astota-klase/kas-ir-dabas-resursi/turisma-resursi"}}
 
         for(int i = 0; i < linkElements.Length; i++) {
@@ -353,6 +377,58 @@ class ekClient {
         return schedule;
     }
 
+    // Iegūst ziņas no e-klases pasta
+    public async Task<Dictionary<string, dynamic>[]> getMessages(int count) {
+        var messages = new List<Dictionary<string, dynamic>>();
+
+        var response = await webClient.GetAsync("/api/family/mail/folder-message-ids/standardType_fmft_inbox");
+        response.EnsureSuccessStatusCode();
+        string messageIdsStr = await response.Content.ReadAsStringAsync();
+
+        messageIdsStr = messageIdsStr.Substring(1, messageIdsStr.Length - 2);
+        string[] messageIds = messageIdsStr.Split(',');
+
+        int messageCount = messageIds.Length >= count ? count : messageIds.Length;
+        var payload = new List<KeyValuePair<string, string>>();
+        for(int i = 0; i < messageCount; i++) 
+            payload.Add(new KeyValuePair<string, string>("messageIds", messageIds[i]));
+
+        response = await webClient.PostAsync("/api/family/mail/messages", new FormUrlEncodedContent(payload.ToArray()));
+        response.EnsureSuccessStatusCode();
+        var vestules = JsonConvert.DeserializeObject<Dictionary<string, dynamic>[]>(await response.Content.ReadAsStringAsync());
+
+        foreach(Dictionary<string, dynamic> vestule in vestules) {
+            var vestuleDetails = new Dictionary<string, dynamic>();
+            string autors = vestule["authorName"];
+            string tema = vestule["subject"];
+            string teksts = vestule["body"];
+            string datums = string.Format("{0:MM/dd/yy}", vestule["timeCreated"]);
+            var tekstsSaites = await getLinks(teksts);
+
+            teksts = teksts.Replace("&nbsp;", " ");
+            teksts = removeHtmlTags(teksts);
+
+            var saites = new List<string>();
+            for(int v = 0; v < tekstsSaites.Length / 2; v++) {
+                if(tekstsSaites.Length == 0) break;
+                if(tekstsSaites[v, 0].StartsWith("https://") || tekstsSaites[v, 0].StartsWith("http://"))
+                    teksts = teksts.Replace(tekstsSaites[v, 0], tekstsSaites[v, 1]);
+                else
+                    teksts = teksts.Replace(tekstsSaites[v, 0], $"{tekstsSaites[v, 0]}(Saite {v + 1}) "); 
+                    saites.Add(tekstsSaites[v, 1]);           
+            }
+
+            vestuleDetails.Add("autors", autors);
+            vestuleDetails.Add("tema", tema);
+            vestuleDetails.Add("teksts", teksts);
+            vestuleDetails.Add("saites", saites.ToArray());
+            vestuleDetails.Add("datums", datums);
+            messages.Add(vestuleDetails);
+        }
+
+        return messages.ToArray();
+    }
+ 
     // Konstruktora async papildinājums
     public async Task<bool> initialize(string UserName, string Password) {
         userName = UserName;

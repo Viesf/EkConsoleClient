@@ -17,9 +17,14 @@ Uzrakstīt konsoles klientu e-klasei, kas var aizstāt vajadzību lietot e-klase
     - [x] Atzīme
 
 - [ ] E-klases pasts
-    - [ ] Vēstuļu lasīšana
+    - [x] Vēstuļu lasīšana
     - [ ] Vēstuļu rakstīšana
+
 - [ ] Skolas saites
+
+- [ ] Sekmju Izraksts
+    - [ ] Atzīmes
+    - [ ] Vidējās atzīmes
 
 <br>
 Viena, no pirmajām reizēm, kad stradāju ar github. Ja jums ir kādi ieteikumi, droši rakstat! :)
