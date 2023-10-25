@@ -207,12 +207,10 @@
 
                                 Console.WriteLine();
                             }
-
                         }
+                        Console.WriteLine("ENTER lai turpinātu"); Console.ReadLine();
                     }
 
-                    Console.Write("nospied jebkuru taustiņu, lai turpinātu");
-                    Console.ReadKey();
                     choice = 0;
                     break;
             }
